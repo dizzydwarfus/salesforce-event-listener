@@ -12,5 +12,6 @@ pyarrow = "*"
 openpyxl = "*"
 aiosfstream = "*"
 asyncio = "*"
+requests = "*"
 
 [dev-packages]

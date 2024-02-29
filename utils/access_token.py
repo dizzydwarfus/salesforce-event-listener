@@ -1,13 +1,11 @@
 import requests
 
-from _globals import PAYLOAD_PASSWORD, DOMAIN
-
 
 class AccessToken:
     def __init__(
         self,
-        domain: str = DOMAIN,
-        payload: dict = PAYLOAD_PASSWORD,
+        domain: str,
+        payload: dict,
         access_token: dict = None,
     ):
         self.domain = domain
