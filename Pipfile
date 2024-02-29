@@ -10,5 +10,7 @@ python-dotenv = "*"
 pandas = "*"
 pyarrow = "*"
 openpyxl = "*"
+aiosfstream = "*"
+asyncio = "*"
 
 [dev-packages]

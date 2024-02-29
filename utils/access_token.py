@@ -1,20 +1,40 @@
 import requests
 
-
-def generate_access_token(domain: str, data: dict):
-    response = requests.post(f"{domain}/services/oauth2/token", data=data)
-    response.raise_for_status()
-    return response.json()
+from _globals import PAYLOAD_PASSWORD, DOMAIN
 
 
-def upsert_access_token(access_token: str):
-    with open(".env", "r") as file:
-        lines = file.readlines()
-        for i, line in enumerate(lines):
-            if line.startswith("ACCESS_TOKEN"):
-                lines[i] = f"ACCESS_TOKEN = {access_token}\n"
-                break
-    with open(".env", "w") as file:
-        file.writelines(lines)
+class AccessToken:
+    def __init__(
+        self,
+        domain: str = DOMAIN,
+        payload: dict = PAYLOAD_PASSWORD,
+        access_token: dict = None,
+    ):
+        self.domain = domain
+        self.payload = payload
+        self.access_token = access_token
 
-    return 0
+    def generate_access_token(
+        self,
+    ) -> dict:
+        response = requests.post(
+            f"{self.domain}/services/oauth2/token", data=self.payload
+        )
+        response.raise_for_status()
+        self.access_token = response.json()["access_token"]
+        return response.json()
+
+    def upsert_access_token(self, access_token: str):
+        with open(".env", "r") as file:
+            lines = file.readlines()
+            for i, line in enumerate(lines):
+                if line.startswith("ACCESS_TOKEN"):
+                    lines[i] = f"ACCESS_TOKEN = {access_token}\n"
+                    break
+        with open(".env", "w") as file:
+            file.writelines(lines)
+
+        return 0
+
+    def __str__(self):
+        return f"Access token: {self.access_token}"
