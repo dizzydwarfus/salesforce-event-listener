@@ -1,4 +1,5 @@
 """Authenticatior class implementations"""
+
 from abc import abstractmethod
 from http import HTTPStatus
 import reprlib

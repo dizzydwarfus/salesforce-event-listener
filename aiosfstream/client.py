@@ -1,4 +1,5 @@
 """Client class implementation"""
+
 from collections import abc
 from http import HTTPStatus
 import logging
@@ -91,10 +92,6 @@ class Client(CometdClient):
         :func:`json.dumps`
         :param json_loads: Function for JSON deserialization, the default is \
         :func:`json.loads`
-        :param loop: Event :obj:`loop <asyncio.BaseEventLoop>` used to
-                     schedule tasks. If *loop* is ``None`` then
-                     :func:`asyncio.get_event_loop` is used to get the default
-                     event loop.
         """
         if not isinstance(authenticator, AuthenticatorBase):
             raise TypeError(
@@ -368,10 +365,6 @@ class SalesforceStreamingClient(Client):
         :func:`json.dumps`
         :param json_loads: Function for JSON deserialization, the default is \
         :func:`json.loads`
-        :param loop: Event :obj:`loop <asyncio.BaseEventLoop>` used to
-                     schedule tasks. If *loop* is ``None`` then
-                     :func:`asyncio.get_event_loop` is used to get the default
-                     event loop.
         """
         # authenticator = PasswordAuthenticator(
         #     domain=domain,

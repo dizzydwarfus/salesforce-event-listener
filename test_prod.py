@@ -38,31 +38,46 @@ def get_platform_events_usage(domain: str, access_token: str):
 
 
 async def stream_events():
+    reconnect_attempts = 0
     # connect to your Salesforce Org (Production or Developer org)
-    async with SalesforceStreamingClient(
-        domain=PROD_DOMAIN,
-        consumer_key=PROD_CONSUMER_KEY,
-        consumer_secret=PROD_CONSUMER_SECRET,
-        sandbox=False,
-        username=PROD_USERNAME,
-        password=PROD_PASSWORD + PROD_SECURITY_TOKEN,
-    ) as client:
-        # subscribe to the platform event using CometD
-        await client.subscribe("/data/ChangeEvents")
-        access_token = client.auth.__dict__["access_token"]
-        domain = client.auth.__dict__["instance_url"]
-        # listen for incoming messages
-        message_count = 0
-        async for message in client:
-            pretty_data = json.dumps(message, indent=4, sort_keys=True)
-            print(f"{pretty_data}")
-            message_count += 1
-            print(f"Message Count: {message_count}")
-            if message_count % 5 == 0:
-                limits = get_limits(domain=domain, access_token=access_token)
-                print(
-                    f'{limits["DailyDeliveredPlatformEvents"]}\n{limits["DailyApiRequests"]}'
+    while True:
+        try:
+            async with SalesforceStreamingClient(
+                domain=PROD_DOMAIN,
+                consumer_key=PROD_CONSUMER_KEY,
+                consumer_secret=PROD_CONSUMER_SECRET,
+                sandbox=False,
+                username=PROD_USERNAME,
+                password=PROD_PASSWORD + PROD_SECURITY_TOKEN,
+            ) as client:
+                reconnect_attempts = (
+                    0  # resets reconnect attempts upon successful connection
                 )
+
+                # subscribe to the platform event using CometD
+                await client.subscribe("/data/ChangeEvents")
+                access_token = client.auth.__dict__["access_token"]
+                domain = client.auth.__dict__["instance_url"]
+                # listen for incoming messages
+                message_count = 0
+                async for message in client:
+                    pretty_data = json.dumps(message, indent=4, sort_keys=True)
+                    print(f"{pretty_data}")
+                    message_count += 1
+                    print(f"Message Count: {message_count}")
+                    if message_count % 5 == 0:
+                        limits = get_limits(domain=domain, access_token=access_token)
+                        print(
+                            f'{limits["DailyDeliveredPlatformEvents"]}\n{limits["DailyApiRequests"]}'
+                        )
+        except Exception as e:
+            print(f"An error occurred: {e}")
+            reconnect_attempts += 1
+            wait_time = min(
+                reconnect_attempts * 2, 60
+            )  # Exponential backoff with a cap
+            print(f"Waiting {wait_time} seconds before reattempting connection...")
+            await asyncio.sleep(wait_time)  # Wait before attempting to reconnect
 
 
 if __name__ == "__main__":

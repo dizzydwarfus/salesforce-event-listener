@@ -1,4 +1,5 @@
 """Client class implementation"""
+
 import asyncio
 import reprlib
 import logging
@@ -91,10 +92,7 @@ class Client:  # pylint: disable=too-many-instance-attributes
         :func:`json.dumps`
         :param json_loads: Function for JSON deserialization, the default is \
         :func:`json.loads`
-        :param loop: Event :obj:`loop <asyncio.BaseEventLoop>` used to
-                     schedule tasks. If *loop* is ``None`` then
-                     :func:`asyncio.get_event_loop` is used to get the default
-                     event loop.
+
         """
         #: CometD service url
         self.url = url
@@ -132,7 +130,7 @@ class Client:  # pylint: disable=too-many-instance-attributes
         cls_name = type(self).__name__
         fmt_spec = (
             "{}({}, {}, connection_timeout={}, ssl={}, "
-            "max_pending_count={}, extensions={}, auth={}, loop={})"
+            "max_pending_count={}, extensions={}, auth={})"
         )
         return fmt_spec.format(
             cls_name,
@@ -495,7 +493,7 @@ class Client:  # pylint: disable=too-many-instance-attributes
 
         assert self._incoming_queue is not None
         # task waiting on incoming messages
-        get_task = asyncio.ensure_future(self._incoming_queue.get(), loop=self._loop)
+        get_task = asyncio.ensure_future(self._incoming_queue.get())
         tasks.append(get_task)
 
         assert self._transport is not None
