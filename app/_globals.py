@@ -24,6 +24,7 @@ SANDBOX_PAYLOAD_CLIENT_CREDENTIALS = {
     "client_id": SANDBOX_CONSUMER_KEY,
     "client_secret": SANDBOX_CONSUMER_SECRET,
 }
+
 PROD_PAYLOAD_CLIENT_CREDENTIALS = {
     "grant_type": "client_credentials",
     "client_id": PROD_CONSUMER_KEY,

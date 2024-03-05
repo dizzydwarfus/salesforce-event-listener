@@ -8,7 +8,7 @@ import asyncio
 from aiosfstream import SalesforceStreamingClient
 
 # Internal imports
-from app._globals import (
+from _globals import (
     PROD_CONSUMER_KEY,
     PROD_CONSUMER_SECRET,
     PROD_USERNAME,

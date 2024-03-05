@@ -4,11 +4,11 @@ FROM python:3.11
 # Set the working directory in the container
 WORKDIR /app
 
-# Copy the current directory contents into the container at /app
-COPY . /app
+# Copy the app directory contents into the container at /app
+COPY ./app /app
 
 # Install any needed packages specified in requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Run listener.py when the container launches
-CMD ["python", "test_prod.py"]
+# Run listener.py when the container launches; '-u' to make sure the output is not buffered
+CMD ["python", "-u", "test_prod.py"]
