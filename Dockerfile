@@ -11,4 +11,4 @@ COPY ./app /app
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Run listener.py when the container launches; '-u' to make sure the output is not buffered
-CMD ["python", "-u", "test_prod.py"]
+CMD ["python", "-u", "listener.py"]
