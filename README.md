@@ -17,7 +17,7 @@ The codebase is organized as follows:
 - `.gitignore`: Specifies intentionally untracked files to ignore.
 - `Dockerfile`: Docker configuration for containerizing the application.
 - `requirements.txt`: Lists Python package dependencies for the project.
-- `test_prod.py`: Test script for production environment interactions.
+- `listener.py`: Listener script for production environment events.
 - `test_sandbox.py`: Test script for sandbox environment interactions.
 
 ## Dependencies
