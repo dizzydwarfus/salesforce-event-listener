@@ -1,4 +1,13 @@
+# import os
 import requests
+import json
+import time
+
+# Async libraries
+import asyncio
+from aiosfstream import SalesforceStreamingClient
+
+# Internal imports
 from _globals import (
     PROD_CONSUMER_KEY,
     PROD_CONSUMER_SECRET,
@@ -8,12 +17,6 @@ from _globals import (
     PROD_DOMAIN,
     # PROD_PAYLOAD_CLIENT_CREDENTIALS,
 )
-import asyncio
-import json
-from aiosfstream import SalesforceStreamingClient
-
-# from aiosfstream.auth import PasswordAuthenticator
-# import os
 # from utils.access_token import AccessToken
 
 
@@ -63,8 +66,15 @@ async def stream_events():
 
 
 if __name__ == "__main__":
-    asyncio.run(stream_events())
-
+    try:
+        start = time.perf_counter()
+        print(f"Started at {start}")
+        asyncio.run(stream_events())
+    except Exception as e:
+        print(e)
+        end = time.perf_counter()
+        print(f"Finished at {end}")
+        print(f"Time elapsed: {(end - start):.2f} minutes.")
     # instance = AccessToken(domain=PROD_DOMAIN, payload=PROD_PAYLOAD_CLIENT_CREDENTIALS)
     # instance.generate_access_token()
     # print(get_stream_events(domain=instance.domain, access_token=instance.access_token))

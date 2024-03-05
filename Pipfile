@@ -13,5 +13,8 @@ openpyxl = "*"
 aiosfstream = "*"
 asyncio = "*"
 requests = "*"
+kafka-python = "*"
+confluent-kafka = "*"
+backoff = "*"
 
 [dev-packages]
