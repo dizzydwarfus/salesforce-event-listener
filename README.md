@@ -48,8 +48,8 @@ python test_sandbox.py
 ### To build and run the Docker container:
 
 ```bash
-docker build -t integration-app .
-docker run -d --name my-integration-app integration-app
+docker build -t sf-listener .
+docker run -d --name sf-listener-app -e ENV_NAME=ENV_VALUE -e ... sf-listener 
 ```
 ## Note on Modified Libraries
 Due to the inactive status of aiocometd and aiosfstream, necessary modifications were made to support the latest async features of Python and ensure compatibility with Salesforce's current API and Event Bus features. These libraries are maintained locally within this project to facilitate direct updates and customizations as required, avoiding dependency on potentially outdated or unsupported external libraries.

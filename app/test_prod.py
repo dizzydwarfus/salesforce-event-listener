@@ -8,7 +8,7 @@ import asyncio
 from aiosfstream import SalesforceStreamingClient
 
 # Internal imports
-from _globals import (
+from app._globals import (
     PROD_CONSUMER_KEY,
     PROD_CONSUMER_SECRET,
     PROD_USERNAME,
@@ -74,7 +74,7 @@ async def stream_events():
             print(f"An error occurred: {e}")
             reconnect_attempts += 1
             wait_time = min(
-                reconnect_attempts * 2, 60
+                reconnect_attempts * 2, 30
             )  # Exponential backoff with a cap
             print(f"Waiting {wait_time} seconds before reattempting connection...")
             await asyncio.sleep(wait_time)  # Wait before attempting to reconnect

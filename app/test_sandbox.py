@@ -1,5 +1,5 @@
 import requests
-from _globals import (
+from app._globals import (
     SANDBOX_CONSUMER_KEY,
     SANDBOX_CONSUMER_SECRET,
     SANDBOX_USERNAME,
