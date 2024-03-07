@@ -2,9 +2,9 @@
 sequenceDiagram
     participant Salesforce
     participant SF_Middleware as SF_BUS Python Middleware (ACI)
-    participant AEG as Azure Event Grid/Kafka
-    participant AFunc as Azure Function
-    participant Logger as Event Logger (DB)
+    participant AEG as CosmosDB/Kafka/Outbox
+    participant AFunc as Azure Function Dispatcher
+    participant Broker as Kafka/EventHub/ServiceBus/EventGrid
     participant SAP_Middleware as SAP__BUS Python Middleware
     participant SAP_B1 as SAP Business One
 
@@ -12,9 +12,10 @@ sequenceDiagram
     SAP_B1->>+SAP_Middleware: (1) Event Notification
     SF_Middleware->>+AEG: (2) Publish Event
     SAP_Middleware->>+AEG: (2) Publish Event
-    AEG->>+AFunc: (3) Consumes events
-    AFunc->>+SAP_B1: (4) Process Event
-    AFunc->>+Salesforce: (4) Process Event
+    AEG->>+AFunc: (3) Get outbox events
+    AFunc->>+Broker: (4) Publish to broker
+    AFunc->>+SAP_B1: (5) Process Event
+    AFunc->>+Salesforce: (5) Process Event
 
     Note over Salesforce,SAP_B1: Optional feedback for confirmation or further processing
 ```

@@ -70,6 +70,7 @@ async def stream_events():
                         print(
                             f'{limits["DailyDeliveredPlatformEvents"]}\n{limits["DailyApiRequests"]}'
                         )
+
         except Exception as e:
             print(f"An error occurred: {e}")
             reconnect_attempts += 1
