@@ -1,13 +1,11 @@
 from confluent_kafka import Producer, Consumer
 
 
-def read_config():
+def read_config(config_file="./client.properties"):
     # reads the client configuration from client.properties
     # and returns it as a key-value map
     config = {}
-    with open(
-        r"C:\Users\Lian.Zhen-Yang\Documents\salesforce_api\app\utils\client.properties"
-    ) as fh:
+    with open(config_file) as fh:
         for line in fh:
             line = line.strip()
             if len(line) != 0 and line[0] != "#":
@@ -16,9 +14,9 @@ def read_config():
     return config
 
 
-def send(topic, key, value):
+def send(config_file, topic, key, value):
     # producer and consumer code here
-    config = read_config()
+    config = read_config(config_file)
 
     # creates a new producer instance
     producer = Producer(config)
@@ -55,7 +53,12 @@ def send(topic, key, value):
 
 
 if __name__ == "__main__":
-    config = read_config()
+    config = read_config("app/utils/client.properties")
     print(config)
 
-    send("account_update", "key", "value")
+    send(
+        config_file="app/utils/client.properties",
+        topic="account_updated",
+        key="key",
+        value="value",
+    )
