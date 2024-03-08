@@ -17,7 +17,8 @@ from _globals import (
     PROD_DOMAIN,
     # PROD_PAYLOAD_CLIENT_CREDENTIALS,
 )
-from utils.kafka_produce import send_message, read_config
+from utils.kafka_produce import send_message
+from utils.transform_sf_message import transform_message
 # from utils.access_token import AccessToken
 
 
@@ -65,7 +66,7 @@ async def stream_events():
                     value = json.dumps(
                         message["data"]["payload"], indent=4, sort_keys=True
                     )
-                    key = str(message["data"]["event"]["replayId"])
+                    key, value = transform_message(message)
                     print(f"Key: {str(key)}")
                     print(f"Value: {value}")
 
@@ -99,14 +100,18 @@ async def stream_events():
 
 if __name__ == "__main__":
     try:
-        start = time.perf_counter()
+        start = time.time()
         print(f"Started at {start}")
         asyncio.run(stream_events())
-    except Exception as e:
-        print(e)
-        end = time.perf_counter()
+    except KeyboardInterrupt:
+        end = time.time()
         print(f"Finished at {end}")
         print(f"Time elapsed: {(end - start):.2f} minutes.")
+    except Exception as e:
+        print(f"An error occurred: {e}")
+    finally:
+        print(f"Exiting... Listened for {(end-start) / 60} minutes.")
+
     # instance = AccessToken(domain=PROD_DOMAIN, payload=PROD_PAYLOAD_CLIENT_CREDENTIALS)
     # instance.generate_access_token()
     # print(get_stream_events(domain=instance.domain, access_token=instance.access_token))
