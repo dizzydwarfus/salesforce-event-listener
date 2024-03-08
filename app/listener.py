@@ -17,6 +17,7 @@ from _globals import (
     PROD_DOMAIN,
     # PROD_PAYLOAD_CLIENT_CREDENTIALS,
 )
+from utils.kafka_produce import send_message, read_config
 # from utils.access_token import AccessToken
 
 
@@ -61,10 +62,25 @@ async def stream_events():
                 # listen for incoming messages
                 message_count = 0
                 async for message in client:
-                    pretty_data = json.dumps(message, indent=4, sort_keys=True)
-                    print(f"{pretty_data}")
+                    value = json.dumps(
+                        message["data"]["payload"], indent=4, sort_keys=True
+                    )
+                    key = str(message["data"]["event"]["replayId"])
+                    print(f"Key: {str(key)}")
+                    print(f"Value: {value}")
+
+                    # # Send to Kafka
+                    send_message(
+                        config_file="app/utils/client.properties",
+                        topic="account_updated",
+                        key=key,
+                        value=value,
+                    )
+
                     message_count += 1
                     print(f"Message Count: {message_count}")
+
+                    # Get limits
                     if message_count % 5 == 0:
                         limits = get_limits(domain=domain, access_token=access_token)
                         print(

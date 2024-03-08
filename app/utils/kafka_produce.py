@@ -14,7 +14,7 @@ def read_config(config_file="./client.properties"):
     return config
 
 
-def send(config_file, topic, key, value):
+def test_send(config_file, topic, key, value):
     # producer and consumer code here
     config = read_config(config_file)
 
@@ -52,11 +52,28 @@ def send(config_file, topic, key, value):
         consumer.close()
 
 
+def send_message(config_file, topic, key, value):
+    # producer and consumer code here
+    config = read_config(config_file)
+
+    # creates a new producer instance
+    producer = Producer(config)
+
+    # produces a sample message
+    producer.produce(topic, key=key, value=value)
+    print(f"Produced message to {topic} with key = {key:12}")
+
+    # send any outstanding or buffered messages to the Kafka broker
+    producer.flush()
+
+    return
+
+
 if __name__ == "__main__":
     config = read_config("app/utils/client.properties")
     print(config)
 
-    send(
+    test_send(
         config_file="app/utils/client.properties",
         topic="account_updated",
         key="key",
