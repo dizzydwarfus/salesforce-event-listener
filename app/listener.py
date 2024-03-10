@@ -106,7 +106,7 @@ if __name__ == "__main__":
     except KeyboardInterrupt:
         end = time.time()
         print(f"Finished at {end}")
-        print(f"Time elapsed: {(end - start):.2f} minutes.")
+        print(f"Time elapsed: {(end - start) / 60:.2f} minutes.")
     except Exception as e:
         print(f"An error occurred: {e}")
     finally:

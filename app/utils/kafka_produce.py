@@ -1,4 +1,8 @@
 from confluent_kafka import Producer, Consumer
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 def read_config(config_file="./client.properties"):
@@ -12,6 +16,17 @@ def read_config(config_file="./client.properties"):
                 parameter, value = line.strip().split("=", 1)
                 config[parameter] = value.strip()
     return config
+
+
+def create_config_from_env():
+    return {
+        "bootstrap.servers": os.getenv("KAFKA_BOOTSTRAP_SERVER"),
+        "security.protocol": os.getenv("SECRUITY_PROTOCOL"),
+        "sasl.mechanisms": os.getenv("SASL_MECHANISM"),
+        "sasl.username": os.getenv("SASL_USERNAME"),
+        "sasl.password": os.getenv("SASL_PASSWORD"),
+        "session.timeout.ms": os.getenv("SESSION_TIMEOUT_MS"),
+    }
 
 
 def test_send(config_file, topic, key, value):
@@ -54,7 +69,7 @@ def test_send(config_file, topic, key, value):
 
 def send_message(config_file, topic, key, value):
     # producer and consumer code here
-    config = read_config(config_file)
+    config = create_config_from_env()
 
     # creates a new producer instance
     producer = Producer(config)
@@ -70,12 +85,13 @@ def send_message(config_file, topic, key, value):
 
 
 if __name__ == "__main__":
-    config = read_config("app/utils/client.properties")
+    # config = read_config("app/utils/client.properties")
+    config = create_config_from_env()
     print(config)
 
-    test_send(
-        config_file="app/utils/client.properties",
-        topic="account_updated",
-        key="key",
-        value="value",
-    )
+    # test_send(
+    #     config_file="app/utils/client.properties",
+    #     topic="account_updated",
+    #     key="key",
+    #     value="value",
+    # )
