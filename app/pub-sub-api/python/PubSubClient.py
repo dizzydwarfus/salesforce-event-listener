@@ -24,7 +24,7 @@ def fetchReqStream(topic):
     while True:
         semaphore.acquire()
         yield pb2.FetchRequest(
-            topic_name=topic, replay_preset=pb2.ReplayPreset.LATEST, num_requested=1
+            topic_name=topic, replay_preset=pb2.ReplayPreset.LATEST, num_requested=10
         )
 
 
