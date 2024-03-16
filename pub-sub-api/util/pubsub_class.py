@@ -184,9 +184,11 @@ class PubSub(object):
 
         try:
             replay_id = int(replay_id).to_bytes(10, "big")
+            print(f"Replay ID is an integer: {replay_id}")
 
         except ValueError:
             replay_id = bytes.fromhex(replay_id)
+            print(f"Replay ID is a hex string: {replay_id}")
 
         return pb2.FetchRequest(
             topic_name=topic,
@@ -388,14 +390,14 @@ class PubSub(object):
         bytes before being used in the FetchRequest. In python, this can be
         done with the `bytes.fromhex()` method.
         """
-        with open("replay_id.txt", "w") as file:
+        with open("replay_id.txt", "wb") as file:
             # store as hexadecimal string
-            file.write(replay_id.hex() + "\n")
+            file.write((replay_id.hex() + "\n").encode("utf-8"))
 
             # store as integer
-            file.write(str(int.from_bytes(replay_id, "big")))
+            file.write((str(int.from_bytes(replay_id, "big"))).encode("utf-8"))
 
-    def read_replay_id(self, filepath: str = "replay_id.txt"):
+    def read_replay_id(self, filepath: str = "./replay_id.txt"):
         """
         Read the replay ID from a file. This is used to resume
         receiving events from a specific point in time. The replay ID is
@@ -410,5 +412,5 @@ class PubSub(object):
         done with the `bytes.fromhex()` method.
         """
         with open(filepath, "r") as file:
-            replay_id = file.readlines()[0].strip()
+            replay_id = file.readlines()[1].strip()
             return replay_id

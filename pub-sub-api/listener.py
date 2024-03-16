@@ -2,6 +2,7 @@ import os
 import time
 import json
 from dotenv import load_dotenv
+import sys
 
 from util.access_token import AccessToken
 from util.pubsub_class import PubSub
@@ -54,7 +55,10 @@ if __name__ == "__main__":
             pubsub.authenticate()
 
             try:
-                replay_id = pubsub.read_replay_id()
+                if len(sys.argv) > 1:
+                    replay_id = pubsub.read_replay_id(sys.argv[1])
+                else:
+                    replay_id = pubsub.read_replay_id()
                 replay_type = "CUSTOM"
                 # print(bytes.fromhex(replay_id))
                 # print(int(replay_id).to_bytes(10, "big"))
