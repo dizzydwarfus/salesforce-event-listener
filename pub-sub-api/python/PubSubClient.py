@@ -13,7 +13,11 @@ from access_token import AccessToken
 from dotenv import load_dotenv
 from bitstring import BitArray
 import sys
+import logging
 
+logging.basicConfig(
+    level=logging.DEBUG, format="%(asctime)s - %(message)s", datefmt="%Y-%m-%d %H:%M:%S"
+)
 
 load_dotenv()
 
@@ -205,8 +209,7 @@ def subscribe_with_retry(
 ):
     attempt = 0
     wait_time = 1  # Start with 1 second wait time
-    # replay_id = read_replay_id()
-    # print(f"self initialized replay_id: {replay_id}")
+
     while True:
         if len(sys.argv) > 1:
             try:
@@ -268,6 +271,7 @@ def subscribe_with_retry(
                             time.strftime("%b %d, %Y %I:%M%p %Z"),
                             "] The subscription is active.",
                         )
+                        raise TimeoutError("No events received")
 
                     # If subscription and processing are successful, reset attempt and wait_time in case of future retries
                     attempt = 0
