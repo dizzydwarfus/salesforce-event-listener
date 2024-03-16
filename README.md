@@ -7,18 +7,25 @@ For integration architecture diagram, please refer to [conceptual diagram](docs/
 
 The codebase is organized as follows:
 
-- `aiocometd/`: Modified library for CometD protocol support.
-- `aiosfstream/`: Modified library for Salesforce streaming API.
-- `salesforce_api_311/`: Contains modules for interacting with Salesforce API v3.11.
-- `SAP_magic/`: Modules for handling SAP Business One integration logic.
-- `utils/`: Utility functions and helpers.
-- `_globals.py`: Global configuration variables.
-- `.env`: Environment variables for storing sensitive information (not tracked by Git).
+- cometd_app/
+  - `aiocometd/`: Modified library for CometD protocol support.
+  - `aiosfstream/`: Modified library for Salesforce streaming API.
+  - `utils/`: Utility functions and helpers.
+  - `_globals.py`: Global configuration variables.
+  - `test_sandbox.py`: Test script for sandbox environment interactions.
+  - `create_custom_channel.py`: Script for creating custom channels in Salesforce.`
+  - `listener.py`: Listener script for production environment events.
+  - `consumer.py`: Consumer script for processing events.
+  - `requirements.txt`: Lists Python package dependencies for the project.
+- `docs/`: Contains documentation and diagrams.
+- pub-sub-api/ (for future use, not currently implemented)
+  -  `pubsub_api.proto`: Protocol buffer file for defining the API.
+  -  `pubsub_api_pb2.py`: Generated Python file from the protocol buffer file.
+  -  `pubsub_api_pb2_grpc.py`: Generated Python file from the protocol buffer file.
+  -  `PubSubClient.py`: Client for interacting with the salesforce pub-sub API.
+  - `requirements.txt`: Lists Python package dependencies for the project.
 - `.gitignore`: Specifies intentionally untracked files to ignore.
 - `Dockerfile`: Docker configuration for containerizing the application.
-- `requirements.txt`: Lists Python package dependencies for the project.
-- `listener.py`: Listener script for production environment events.
-- `test_sandbox.py`: Test script for sandbox environment interactions.
 
 ## Dependencies
 
@@ -36,7 +43,7 @@ Set up environment variables in .env file based on .env.example (if provided).
 To run the integration listener:
 
 ```bash
-python test_prod.py
+python listener.py
 ```
 
 Or, for sandbox testing:
@@ -53,3 +60,6 @@ docker run -d --name sf-listener-app -e ENV_NAME=ENV_VALUE -e ... sf-listener
 ```
 ## Note on Modified Libraries
 Due to the inactive status of aiocometd and aiosfstream, necessary modifications were made to support the latest async features of Python and ensure compatibility with Salesforce's current API and Event Bus features. These libraries are maintained locally within this project to facilitate direct updates and customizations as required, avoiding dependency on potentially outdated or unsupported external libraries.
+
+## Note on Pub-Sub API
+The `pub-sub-api` directory contains a protocol buffer file for defining the API, as well as generated Python files for the API client. This is intended for future use and is not currently implemented in the project. This is the new API that Salesforce is moving towards, and it will replace the current CometD and Streaming API. The `pubsub_api.proto` file defines the API, and the `PubSubClient.py` file is the client for interacting with the Salesforce pub-sub API.
