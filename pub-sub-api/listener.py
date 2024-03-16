@@ -3,8 +3,8 @@ import time
 import json
 from dotenv import load_dotenv
 
-from access_token import AccessToken
-from pubsub_class import PubSub
+from util.access_token import AccessToken
+from util.pubsub_class import PubSub
 from util.ChangeEventHeaderUtility import process_bitmap
 
 load_dotenv()
@@ -18,7 +18,7 @@ argument_dict = {
     "security_token": os.environ.get("PROD_SECURITY_TOKEN"),
     "grpc_host": os.environ.get("GRPC_HOST"),
     "grpc_port": os.environ.get("GRPC_PORT"),
-    "topic_name": "/data/ChangeEvents",
+    "topic_name": os.environ.get("TOPIC_NAME"),
 }
 
 

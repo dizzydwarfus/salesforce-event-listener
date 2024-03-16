@@ -16,10 +16,10 @@ import avro.schema
 import certifi
 import grpc
 
-import pubsub_api_pb2 as pb2
-import pubsub_api_pb2_grpc as pb2_grpc
+import util.pubsub_api_pb2 as pb2
+import util.pubsub_api_pb2_grpc as pb2_grpc
 
-from access_token import AccessToken
+from util.access_token import AccessToken
 
 with open(certifi.where(), "rb") as f:
     secure_channel_credentials = grpc.ssl_channel_credentials(f.read())
