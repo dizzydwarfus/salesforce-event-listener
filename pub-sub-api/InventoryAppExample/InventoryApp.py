@@ -7,7 +7,11 @@ the example, this file would be hosted somewhere outside of Salesforce. The `if
 __debug__` conditionals are to slow down the speed of the app for demoing
 purposes.
 """
+
 import os, sys, avro
+from dotenv import load_dotenv
+
+load_dotenv()
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 parent_dir_path = os.path.abspath(os.path.join(dir_path, os.pardir))
@@ -22,7 +26,7 @@ from utils.ClientUtil import command_line_input
 import time
 from util.ChangeEventHeaderUtility import process_bitmap
 
-my_publish_topic = '/event/NewOrderConfirmation__e'
+my_publish_topic = "/event/NewOrderConfirmation__e"
 
 
 def make_publish_request(schema_id, record_id, obj):
@@ -31,7 +35,8 @@ def make_publish_request(schema_id, record_id, obj):
     """
     req = pb2.PublishRequest(
         topic_name=my_publish_topic,
-        events=generate_producer_events(schema_id, record_id, obj))
+        events=generate_producer_events(schema_id, record_id, obj),
+    )
     return req
 
 
@@ -44,10 +49,11 @@ def generate_producer_events(schema_id, record_id, obj):
     dt = datetime.now() + timedelta(days=5)
     payload = {
         "CreatedDate": int(datetime.now().timestamp()),
-        "CreatedById": '005R0000000cw06IAA',
+        "CreatedById": "005R0000000cw06IAA",
         "OpptyRecordId__c": record_id,
         "EstimatedDeliveryDate__c": int(dt.timestamp()),
-        "Weight__c": 58.2}
+        "Weight__c": 58.2,
+    }
     req = {
         "schema_id": schema_id,
         "payload": obj.encode(schema, payload),
@@ -76,26 +82,38 @@ def process_order(event, pubsub):
             payload_bytes = evt.event.payload
             schema_id = evt.event.schema_id
             json_schema = pubsub.get_schema_json(schema_id)
-            decoded_event = pubsub.decode(pubsub.get_schema_json(schema_id),
-                                    payload_bytes)
+            decoded_event = pubsub.decode(
+                pubsub.get_schema_json(schema_id), payload_bytes
+            )
 
             print("Received event payload: \n", decoded_event)
-            #  A change event contains the ChangeEventHeader field. Check if received event is a change event. 
-            if 'ChangeEventHeader' in decoded_event:
+            #  A change event contains the ChangeEventHeader field. Check if received event is a change event.
+            if "ChangeEventHeader" in decoded_event:
                 # Decode the bitmap fields contained within the ChangeEventHeader. For example, decode the 'changedFields' field.
                 # An example to process bitmap in 'changedFields'
-                changed_fields = decoded_event['ChangeEventHeader']['changedFields']
-                converted_changed_fields = process_bitmap(avro.schema.parse(json_schema), changed_fields)
-                print("Change Type: " + decoded_event['ChangeEventHeader']['changeType'])
+                changed_fields = decoded_event["ChangeEventHeader"]["changedFields"]
+                converted_changed_fields = process_bitmap(
+                    avro.schema.parse(json_schema), changed_fields
+                )
+                print(
+                    "Change Type: " + decoded_event["ChangeEventHeader"]["changeType"]
+                )
                 print("=========== Changed Fields =============")
                 print(converted_changed_fields)
                 print("=========================================")
-                # Do not process updates made by the SalesforceListener app to the opportunity record delivery date 
-                if decoded_event['ChangeEventHeader']['changeOrigin'].find('client=SalesforceListener') != -1:
-                    print("Skipping change event because it is an update to the delivery date by SalesforceListener.")
+                # Do not process updates made by the SalesforceListener app to the opportunity record delivery date
+                if (
+                    decoded_event["ChangeEventHeader"]["changeOrigin"].find(
+                        "client=SalesforceListener"
+                    )
+                    != -1
+                ):
+                    print(
+                        "Skipping change event because it is an update to the delivery date by SalesforceListener."
+                    )
                     return
 
-            record_id = decoded_event['ChangeEventHeader']['recordIds'][0]
+            record_id = decoded_event["ChangeEventHeader"]["recordIds"][0]
 
             if __debug__:
                 time.sleep(10)
@@ -115,14 +133,18 @@ def process_order(event, pubsub):
             topic_info = pubsub.get_topic(topic_name=my_publish_topic)
 
             # Publish NewOrderConfirmation__e event
-            res = pubsub.stub.Publish(make_publish_request(topic_info.schema_id, record_id, pubsub),
-                                    metadata=pubsub.metadata)
+            res = pubsub.stub.Publish(
+                make_publish_request(topic_info.schema_id, record_id, pubsub),
+                metadata=pubsub.metadata,
+            )
             if res.results[0].replay_id:
                 print("> Event published successfully.")
             else:
                 print("> Failed publishing event.")
     else:
-        print("[", time.strftime('%b %d, %Y %l:%M%p %Z'), "] The subscription is active.")
+        print(
+            "[", time.strftime("%b %d, %Y %l:%M%p %Z"), "] The subscription is active."
+        )
 
     # The replay_id is used to resubscribe after this position in the stream if the client disconnects.
     # Implement storage of replay for resubscribe!!!
@@ -134,10 +156,22 @@ def run(argument_dict):
     cdc_listener.auth()
 
     # Subscribe to Opportunity CDC events
-    cdc_listener.subscribe('/data/OpportunityChangeEvent', "LATEST", "", 1, process_order)
+    cdc_listener.subscribe(
+        "/data/OpportunityChangeEvent", "LATEST", "", 1, process_order
+    )
 
 
-if __name__ == '__main__':
-    argument_dict = command_line_input(sys.argv[1:])
+if __name__ == "__main__":
+    argument_dict = {
+        "url": os.environ.get("PROD_DOMAIN"),
+        "client_id": os.environ.get("PROD_CONSUMER_KEY"),
+        "client_secret": os.environ.get("PROD_CONSUMER_SECRET"),
+        "username": os.environ.get("PROD_USERNAME"),
+        "password": os.environ.get("PROD_PASSWORD"),
+        "security_token": os.environ.get("PROD_SECURITY_TOKEN"),
+        "grpc_host": os.environ.get("GRPC_HOST"),
+        "grpc_port": os.environ.get("GRPC_PORT"),
+        "topic_name": "data/ChangeEvents",
+    }
     logging.basicConfig()
     run(argument_dict)
