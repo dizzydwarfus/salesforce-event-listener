@@ -30,7 +30,7 @@ The codebase is organized as follows:
 ## Dependencies
 
 This project's dependencies are listed in `requirements.txt`. Note that `aiocometd` and `aiosfstream` are not included as external dependencies but are part of the project structure and maintained locally.
-~~~~
+
 ## Setup
 
 ### Install dependencies:
