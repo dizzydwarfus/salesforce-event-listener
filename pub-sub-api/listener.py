@@ -43,7 +43,6 @@ def process_event(event, pubsub):
             time.strftime("%b %d, %Y %I:%M%p %Z"),
             "] The subscription is active.",
         )
-        raise TimeoutError("No events received")
 
 
 if __name__ == "__main__":
