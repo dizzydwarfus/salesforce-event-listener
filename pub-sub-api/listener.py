@@ -7,6 +7,7 @@ import sys
 from util.access_token import AccessToken
 from util.pubsub_class import PubSub
 from util.ChangeEventHeaderUtility import process_bitmap
+from util.kafka_produce import send_message
 
 load_dotenv()
 
@@ -34,7 +35,14 @@ def process_event(event, pubsub):
         for evt in event.events:
             event_read = pubsub.read_event(evt, process_bitmap)
             event_read = pubsub.return_event(event_read)
+
             print(json.dumps(event_read, indent=2))
+
+            send_message(
+                topic=os.environ.get("KAFKA_TOPIC"),
+                key=event_read["ChangeEventHeader"]["recordIds"][0],
+                value=json.dumps(event_read, indent=2),
+            )
 
         pubsub.store_replay_id(event.latest_replay_id)
 
